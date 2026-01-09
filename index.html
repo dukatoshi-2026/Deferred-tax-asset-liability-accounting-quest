@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>税効果会計クエスト - Tax Accounting Quest</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Mequilibri, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            height: 30px;
+            border-radius: 15px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: #4CAF50;
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .story-box {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        
+        .story-box p {
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .character {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .character-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-right: 15px;
+        }
+        
+        .character-text {
+            flex: 1;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .character-name {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .question-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .question-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 20px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .option-btn {
+            background: white;
+            border: 3px solid #667eea;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        
+        .option-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(10px);
+        }
+        
+        .option-btn.correct {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        
+        .option-btn.incorrect {
+            background: #f44336;
+            color: white;
+            border-color: #f44336;
+        }
+        
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            border: 2px solid #4CAF50;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            border: 2px solid #f44336;
+            color: #721c24;
+        }
+        
+        .feedback-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.3s ease;
+            display: none;
+        }
+        
+        .next-btn.show {
+            display: inline-block;
+        }
+        
+        .next-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .start-screen {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .start-screen h2 {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .start-screen p {
+            font-size: 1.1em;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        
+        .start-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 60px;
+            font-size: 1.5em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+        
+        .completion-screen {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .completion-screen h2 {
+            font-size: 2.5em;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        
+        .trophy {
+            font-size: 5em;
+            margin: 20px 0;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🎓 税効果会計クエスト</h1>
+            <p class="subtitle">会計初心者のための学習ゲーム</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%">
+                    <span id="progressText">0%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <!-- Start Screen -->
+            <div id="startScreen" class="start-screen">
+                <h2>ようこそ、新人会計士さん！</h2>
+                <p>あなたは「さくら商事株式会社」に配属された新人会計士です。<br>
+                先輩会計士の田中さんと一緒に、税効果会計の基礎を学んでいきましょう。</p>
+                <p>全5章のクエストをクリアして、<br>
+                <strong>「税効果会計マスター」</strong>を目指しましょう！</p>
+                <button class="start-btn" onclick="startGame()">🚀 クエストを開始する</button>
+            </div>
+            
+            <!-- Game Screen -->
+            <div id="gameScreen" class="hidden">
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="currentChapter">1</div>
+                        <div class="stat-label">現在の章</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="correctAnswers">0</div>
+                        <div class="stat-label">正解数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="experience">0</div>
+                        <div class="stat-label">経験値</div>
+                    </div>
+                </div>
+                
+                <div class="story-box" id="storyBox">
+                    <!-- Story content will be inserted here -->
+                </div>
+                
+                <div class="character" id="characterBox">
+                    <!-- Character dialogue will be inserted here -->
+                </div>
+                
+                <div class="question-box" id="questionBox">
+                    <!-- Question will be inserted here -->
+                </div>
+                
+                <div class="feedback" id="feedback">
+                    <!-- Feedback will be inserted here -->
+                </div>
+                
+                <button class="next-btn" id="nextBtn" onclick="nextQuestion()">次へ進む →</button>
+            </div>
+            
+            <!-- Completion Screen -->
+            <div id="completionScreen" class="completion-screen hidden">
+                <div class="trophy">🏆</div>
+                <h2>おめでとうございます！</h2>
+                <p style="font-size: 1.3em; margin: 20px 0;">
+                    あなたは<strong>「税効果会計マスター」</strong>の称号を獲得しました！
+                </p>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="finalCorrect">0</div>
+                        <div class="stat-label">正解数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="finalExperience">0</div>
+                        <div class="stat-label">総獲得経験値</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="finalAccuracy">0%</div>
+                        <div class="stat-label">正解率</div>
+                    </div>
+                </div>
+                <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: left;">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">🎓 学んだこと</h3>
+                    <ul style="line-height: 2; color: #333;">
+                        <li>税効果会計の目的と基本概念</li>
+                        <li>一時差異と永久差異の違い</li>
+                        <li>将来加算一時差異と将来減算一時差異</li>
+                        <li>繰延税金資産・負債の計算方法</li>
+                        <li>回収可能性の判断基準</li>
+                    </ul>
+                </div>
+                <button class="start-btn" onclick="restartGame()" style="margin-top: 30px;">
+                    🔄 もう一度プレイする
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const gameData = [
+            // Chapter 1: 税効果会計の基礎
+            {
+                chapter: 1,
+                chapterTitle: "第1章：税効果会計って何？",
+                story: "初出勤のあなたを、先輩の田中会計士が温かく迎えてくれました。「さあ、まずは税効果会計の基本から学んでいこう！」",
+                character: "👨‍💼",
+                characterName: "田中先輩",
+                dialogue: "税効果会計は、会計上の利益と税務上の所得の違いを調整する仕組みなんだ。まずはその目的から理解しよう！",
+                question: "税効果会計の主な目的は次のうちどれでしょうか？",
+                options: [
+                    "税金の支払いを減らすため",
+                    "適切な期間損益計算を行うため",
+                    "税務署への報告を簡単にするため",
+                    "会計処理を複雑にするため"
+                ],
+                correct: 1,
+                explanation: "正解です！税効果会計の目的は、税金費用を適切な期間に配分し、正しい期間損益計算を行うことです。会計上の利益と税務上の所得には一時的な差異が生じることがあり、それを調整するのが税効果会計なんです。",
+                wrongExplanation: "残念！税効果会計の主な目的は「適切な期間損益計算を行うため」です。会計上の利益と税務上の所得の差異を調整し、税金費用を適切な期間に配分することが目的なんですよ。"
+            },
+            {
+                chapter: 1,
+                story: "田中先輩が具体例を使って説明を続けます。",
+                character: "👨‍💼",
+                characterName: "田中先輩",
+                dialogue: "税効果会計では「一時差異」という概念がとても重要なんだ。これは会計と税務で認識するタイミングが違うだけで、将来的には解消される差異のことだよ。",
+                question: "次のうち、一時差異に該当するものはどれでしょうか？",
+                options: [
+                    "交際費の損金不算入額",
+                    "減価償却費の会計と税務の差額",
+                    "受取配当金の益金不算入額",
+                    "罰金の支払い"
+                ],
+                correct: 1,
+                explanation: "素晴らしい！減価償却費の差額は一時差異です。会計上と税務上で償却方法が異なる場合、各年度の費用額に差が生じますが、最終的には解消されます。これが一時差異の典型例なんです。",
+                wrongExplanation: "惜しい！正解は「減価償却費の会計と税務の差額」です。交際費の損金不算入や罰金などは、将来も解消されない「永久差異」に分類されます。一時差異は将来的に解消される差異なんですよ。"
+            },
+            // Chapter 2: 一時差異の種類
+            {
+                chapter: 2,
+                chapterTitle: "第2章：一時差異を見つけよう",
+                story: "1週間が経ち、あなたは基礎知識を身につけました。今日は実際の取引から一時差異を見つける練習です。",
+                character: "👨‍💼",
+                characterName: "田中先輩",
+                dialogue: "一時差異には2種類あるんだ。「将来加算一時差異」と「将来減算一時差異」。これを正しく判定できることが大切だよ！",
+                question: "将来「加算」一時差異とは、どのような差異でしょうか？",
+                options: [
+                    "将来、税金が減る差異",
+                    "将来、課税所得を増やす差異",
+                    "将来、会計上の利益を増やす差異",
+                    "将来、解消されない差異"
+                ],
+                correct: 1,
+                explanation: "正解です！将来加算一時差異は、将来、課税所得を増やす（加算する）差異のことです。例えば、圧縮記帳や資産評価益などが該当します。これには繰延税金負債を計上します。",
+                wrongExplanation: "残念！将来加算一時差異は「将来、課税所得を増やす差異」です。今期は会計上の利益より税務上の所得が少ないけれど、将来は逆転する差異なんです。"
+            },
+            {
+                chapter: 2,
+                story: "田中先輩が実際の取引例を示します。",
+                character: "👨‍💼",
+                characterName: "田中先輩",
+                dialogue: "貸倒引当金を例に考えてみよう。会計上は見積もりで計上できるけど、税務上は実際に貸し倒れないと損金にできないんだ。",
+                question: "貸倒引当金の繰入額（会計上認められるが税務上は認められない部分）は何差異でしょうか？",
+                options: [
+                    "永久差異",
+                    "将来加算一時差異",
+                    "将来減算一時差異",
+                    "差異ではない"
+                ],
+                correct: 2,
+                explanation: "完璧です！貸倒引当金は将来減算一時差異です。今期は会計上費用として計上しても税務上は損金にならず、課税所得が大きくなります。でも将来実際に貸し倒れた時に損金になるので、その時に課税所得が減る（減算される）んです。",
+                wrongExplanation: "もう一度考えてみよう！貸倒引当金は「将来減算一時差異」です。今は税務上認められなくても、将来実際に貸し倒れた時には損金として課税所得を減らす効果があるんですよ。"
+            },
+            {
+                chapter: 2,
+                story: "次は固定資産の減価償却について考えます。",
+                character: "👨‍💼",
+                characterName: "田中先輩",
+                dialogue: "会計上の減価償却が500万円、税務上の償却限度額が300万円だった場合を考えてみよう。この200万円の差額はどうなるかな？",
+                question: "この場合の200万円の超過償却額は何差異でしょうか？",
+                options: [
+                    "将来加算一時差異",
+                    "将来減算一時差異",
+                    "永久差異",
+                    "差異は生じない"
+                ],
+                correct: 1,
+                explanation: "その通り！会計上の償却額が税務上の限度額を超える場合、超過額は将来減算一時差異になります。今期は損金にならず課税所得が増えますが、将来の期間で残りを償却できるので、その時に課税所得が減るんです。",
+                wrongExplanation: "惜しい！超過償却額は「将来減算一時差異」です。今期は税務上認められなくても、将来の期間で償却でき、その時に課税所得を減らす効果があるんですよ。"
+            },
+            // Chapter 3: 繰延税金資産・負債の計算
+            {
+                chapter: 3,
+                chapterTitle: "第3章：繰延税金資産・負債を計算しよう",
+                story: "2週間が経過し、いよいよ実際の計算に挑戦です。電卓を片手に、田中先輩の指導が始まります。",
+                character: "👨‍💼",
+                characterName: "田中先輩",
+                dialogue: "繰延税金資産・負債は、一時差異に実効税率をかけて計算するんだ。実効税率が30%として、実際に計算してみよう！",
+                question: "将来減算一時差異が1,000万円ある場合、繰延税金資産はいくらでしょうか？（実効税率30%）",
+                options: [
+                    "1,000万円",
+                    "700万円",
+                    "300万円",
+                    "3,000万円"
+                ],
+                correct: 2,
+                explanation: "正解です！繰延税金資産 = 将来減算一時差異 × 実効税率 = 1,000万円 × 30% = 300万円 となります。この300万円が、将来税金を減らす効果を表しているんです。",
+                wrongExplanation: "計算を確認してみましょう！繰延税金資産 = 1,000万円 × 30% = 300万円 です。一時差異に実効税率を掛けるのがポイントですよ。"
+            },
+            {
+                chapter: 3,
+                story: "次は繰延税金負債の計算です。",
+                character: "👨‍💼",
+                characterName: "田中先輩",
+                dialogue: "今度は将来加算一時差異の場合だよ。圧縮記帳で固定資産の帳簿価額が2,000万円減少したとしよう。",
+                question: "将来加算一時差異2,000万円に対する繰延税金負債はいくらでしょうか？（実効税率30%）",
+                options: [
+                    "2,000万円",
+                    "1,400万円",
+                    "600万円",
+                    "6,000万円"
+                ],
+                correct: 2,
+                explanation: "完璧です！繰延税金負債 = 将来加算一時差異 × 実効税率 = 2,000万円 × 30% = 600万円 です。将来この分だけ税金が増えることを表しています。",
+                wrongExplanation: "もう一度計算してみましょう！繰延税金負債 = 2,000万円 × 30% = 600万円 です。考え方は繰延税金資産と同じですよ。"
+            },
+            {
+                chapter: 3,
+                story: "実際の会計処理について学びます。",
+                character: "👨‍💼",
+                characterName: "田中先輩",
+                dialogue: "繰延税金資産を計上する時の仕訳を覚えよう。借方と貸方、どちらに来るかな？",
+                question: "繰延税金資産300万円を計上する仕訳の借方は何でしょうか？",
+                options: [
+                    "法人税等調整額 300万円",
+                    "繰延税金資産 300万円",
+                    "法人税等 300万円",
+                    "繰延税金負債 300万円"
+                ],
+                correct: 1,
+                explanation: "素晴らしい！正しい仕訳は「繰延税金資産 300万円 / 法人税等調整額 300万円」です。繰延税金資産は資産なので借方に、法人税等調整額は費用のマイナスとして貸方に計上します。",
+                wrongExplanation: "仕訳を確認しましょう！繰延税金資産は「資産」なので借方です。正しい仕訳は「繰延税金資産 / 法人税等調整額」となります。"
+            },
+            // Chapter 4: 回収可能性の判断
+            {
+                chapter: 4,
+                chapterTitle: "第4章：回収可能性を判断しよう",
+                story: "1ヶ月が経ち、あなたは計算をマスターしました。しかし田中先輩は真剣な表情で言います。「ここからが本当に重要なんだ」",
+                character: "👨‍💼",
+                characterName: "田中先輩",
+                dialogue: "繰延税金資産は、将来の税金を減らす効果があるけど、それが実現しなければ意味がない。だから「回収可能性」を慎重に判断する必要があるんだ。",
+                question: "繰延税金資産の回収可能性を判断する上で、最も重要な要素は何でしょうか？",
+                options: [
+                    "会社の資本金の額",
+                    "将来の課税所得の見積もり",
+                    "従業員の数",
+                    "会社の設立年数"
+                ],
+                correct: 1,
+                explanation: "正解です！繰延税金資産の回収可能性は、将来の課税所得の見積もりが最も重要です。将来十分な課税所得が見込めなければ、繰延税金資産を計上しても回収できないため、計上額を減額する必要があります。",
+                wrongExplanation: "もう一度考えてみましょう！回収可能性の判断で最も重要なのは「将来の課税所得の見積もり」です。将来税金を払う利益がなければ、税金を減らす効果も得られないからです。"
+            },
+            {
+                chapter: 4,
+                story: "会社の業績状況による分類について学びます。",
+                character: "👨‍💼",
+                characterName: "田中先輩",
+                dialogue: "会社は業績に応じて5つに分類されるんだ。それぞれで繰延税金資産の計上額が変わってくるよ。",
+                question: "過去も現在も安定して利益を計上している会社（分類1）の場合、繰延税金資産の計上はどうなるでしょうか？",
+                options: [
+                    "全額計上できない",
+                    "半額のみ計上できる",
+                    "原則として全額計上できる",
+                    "計上する必要がない"
+                ],
+                correct: 2,
+                explanation: "その通り！分類1の会社（過去・現在ともに安定して利益を計上）は、将来も課税所得が見込めるため、原則として繰延税金資産を全額計上できます。これが最も健全な状態ですね。",
+                wrongExplanation: "惜しい！分類1の優良企業では「原則として全額計上できる」んです。将来も安定して利益が見込めるため、繰延税金資産を全額回収できると判断されます。"
+            },
+            {
+                chapter: 4,
+                story: "逆に業績が悪い会社の場合を考えます。",
+                character: "👨‍💼",
+                characterName: "田中先輩",
+                dialogue: "重要な赤字が続いている会社の場合は、より慎重な判断が必要なんだ。",
+                question: "過去3年間赤字が続き、今期も重要な赤字の会社（分類5）の場合、どのように対応すべきでしょうか？",
+                options: [
+                    "将来の利益計画に関わらず全額計上する",
+                    "原則として繰延税金資産を計上しない",
+                    "必ず全額を計上しなければならない",
+                    "前期と同額を計上する"
+                ],
+                correct: 1,
+                explanation: "正解です！分類5の会社（重要な赤字が継続）では、将来の回収可能性が極めて不確実なため、原則として繰延税金資産を計上しません。ただし、例外的に将来確実に回収できる部分のみ計上できる場合もあります。",
+                wrongExplanation: "残念！分類5の会社では「原則として繰延税金資産を計上しない」んです。将来の利益が不確実なため、保守的に判断する必要があるんですよ。"
+            },
+            // Chapter 5: 総合問題
+            {
+                chapter: 5,
+                chapterTitle: "最終章：決算をまとめよう",
+                story: "ついに決算日がやってきました。あなたは3ヶ月間の学習の成果を発揮する時です。",
+                character: "👨‍💼",
+                characterName: "田中先輩",
+                dialogue: "これまで学んだことを全部使って、実際の決算処理に挑戦しよう！君ならできるよ！",
+                question: "さくら商事の当期の状況：貸倒引当金500万円（将来減算一時差異）、実効税率30%、会社は分類1。適切な会計処理は？",
+                options: [
+                    "繰延税金資産150万円を計上する",
+                    "繰延税金負債150万円を計上する",
+                    "繰延税金資産500万円を計上する",
+                    "何も計上しない"
+                ],
+                correct: 0,
+                explanation: "完璧です！将来減算一時差異500万円 × 実効税率30% = 繰延税金資産150万円。会社は分類1なので全額計上できます。仕訳は「繰延税金資産150万円 / 法人税等調整額150万円」となります。",
+                wrongExplanation: "もう一度整理してみましょう！貸倒引当金は将来減算一時差異なので繰延税金資産、計算は500万円×30%=150万円、分類1なので全額計上可能です。"
+            },
+            {
+                chapter: 5,
+                story: "最後の問題です。",
+                character: "👨‍💼",
+                characterName: "田中先輩",
+                dialogue: "最後に、税効果会計の本質的な理解を確認させてください。",
+                question: "税効果会計を適用することで、財務諸表の利用者にとってどのようなメリットがあるでしょうか？",
+                options: [
+                    "税金の支払額が減少する",
+                    "会計処理が簡単になる",
+                    "適切な期間の業績が把握できる",
+                    "税務調査が免除される"
+                ],
+                correct: 2,
+                explanation: "素晴らしい！税効果会計の最大のメリットは、税金費用を適切な期間に配分することで、企業の真の業績を正確に把握できることです。これにより、投資家や債権者がより適切な意思決定ができるようになります。あなたは税効果会計マスターです！",
+                wrongExplanation: "惜しい！正解は「適切な期間の業績が把握できる」です。税効果会計は税金を減らすためではなく、正確な期間損益計算のための仕組みなんです。でもここまでよく頑張りました！"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let correctCount = 0;
+        let totalExperience = 0;
+        let totalQuestions = gameData.length;
+
+        function startGame() {
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const data = gameData[currentQuestionIndex];
+            
+            // Update stats
+            document.getElementById('currentChapter').textContent = data.chapter;
+            document.getElementById('correctAnswers').textContent = correctCount;
+            document.getElementById('experience').textContent = totalExperience;
+            
+            // Update progress bar
+            const progress = ((currentQuestionIndex) / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '%';
+            
+            // Update story box
+            const storyBox = document.getElementById('storyBox');
+            if (data.chapterTitle) {
+                storyBox.innerHTML = `<h2 style="color: #667eea; margin-bottom: 15px;">${data.chapterTitle}</h2><p>${data.story}</p>`;
+            } else {
+                storyBox.innerHTML = `<p>${data.story}</p>`;
+            }
+            
+            // Update character
+            const characterBox = document.getElementById('characterBox');
+            characterBox.innerHTML = `
+                <div class="character-avatar">${data.character}</div>
+                <div class="character-text">
+                    <div class="character-name">${data.characterName}</div>
+                    <div>${data.dialogue}</div>
+                </div>
+            `;
+            
+            // Update question
+            const questionBox = document.getElementById('questionBox');
+            let optionsHTML = '';
+            data.options.forEach((option, index) => {
+                optionsHTML += `<button class="option-btn" onclick="checkAnswer(${index})">${option}</button>`;
+            });
+            
+            questionBox.innerHTML = `
+                <div class="question-title">📝 ${data.question}</div>
+                <div class="options">${optionsHTML}</div>
+            `;
+            
+            // Hide feedback and next button
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('nextBtn').classList.remove('show');
+        }
+
+        function checkAnswer(selectedIndex) {
+            const data = gameData[currentQuestionIndex];
+            const options = document.querySelectorAll('.option-btn');
+            const feedback = document.getElementById('feedback');
+            
+            // Disable all options
+            options.forEach(btn => btn.disabled = true);
+            
+            // Mark correct and incorrect
+            if (selectedIndex === data.correct) {
+                options[selectedIndex].classList.add('correct');
+                feedback.className = 'feedback correct show';
+                feedback.innerHTML = `
+                    <div class="feedback-title">✅ 正解です！</div>
+                    <p>${data.explanation}</p>
+                `;
+                correctCount++;
+                totalExperience += 100;
+                
+                // Update stats immediately
+                document.getElementById('correctAnswers').textContent = correctCount;
+                document.getElementById('experience').textContent = totalExperience;
+            } else {
+                options[selectedIndex].classList.add('incorrect');
+                options[data.correct].classList.add('correct');
+                feedback.className = 'feedback incorrect show';
+                feedback.innerHTML = `
+                    <div class="feedback-title">❌ 不正解</div>
+                    <p>${data.wrongExplanation}</p>
+                `;
+                totalExperience += 30;
+                document.getElementById('experience').textContent = totalExperience;
+            }
+            
+            // Show next button
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < gameData.length) {
+                loadQuestion();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                showCompletion();
+            }
+        }
+
+        function showCompletion() {
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('completionScreen').classList.remove('hidden');
+            
+            const accuracy = Math.round((correctCount / totalQuestions) * 100);
+            
+            document.getElementById('finalCorrect').textContent = correctCount + ' / ' + totalQuestions;
+            document.getElementById('finalExperience').textContent = totalExperience;
+            document.getElementById('finalAccuracy').textContent = accuracy + '%';
+            
+            // Update progress bar to 100%
+            document.getElementById('progressBar').style.width = '100%';
+            document.getElementById('progressText').textContent = '100%';
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function restartGame() {
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            totalExperience = 0;
+            
+            document.getElementById('completionScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            
+            loadQuestion();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
